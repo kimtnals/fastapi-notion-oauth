@@ -35,7 +35,7 @@ NOTION_REDIRECT_URI=http://localhost:8000/callback
 
 ## Running the app
 ```bash
-uvicorn main:app --reload
+uvicorn oauth_server:app --reload
 ```
 Access `http://localhost:8000/` in your browser to start the OAuth flow.
 
