@@ -1,6 +1,7 @@
 from fastapi import FastAPI, Request, HTTPException, Response
-from fastapi.responses import RedirectResponse, JSONResponse
+from fastapi.responses import RedirectResponse, JSONResponse, HTMLResponse
 from pydantic_settings import BaseSettings
+from fastapi.staticfiles import StaticFiles
 from pydantic import Field
 from urllib.parse import urlencode
 from uuid import uuid4
@@ -24,9 +25,18 @@ class Settings(BaseSettings):
 
 settings = Settings()
 app = FastAPI()
+app.mount("/static", StaticFiles(directory="static"), name="static")
 
-# Root: Redirect user to Notion login page upon access
-@app.get("/")
+
+# Root: Serve the index.html page at the root URL
+@app.get("/", response_class=HTMLResponse)
+async def serve_root():
+    with open("static/index.html", "r", encoding="utf-8") as f:
+        return f.read()
+
+
+# Login: Redirect user to Notion login page upon access
+@app.get("/login")
 async def start_oauth() -> RedirectResponse:
     state = str(uuid4())
     query = urlencode({
